@@ -1,0 +1,1 @@
+# Test configuration - tests use @WebMvcTest and mocks, no database needed
