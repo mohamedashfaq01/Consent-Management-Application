@@ -1,0 +1,32 @@
+# Runs for every branch and merge request. The Gradle build executes compilation,
+# unit/integration tests, and the configured verification tasks.
+image: eclipse-temurin:21-jdk
+
+stages:
+  - verify
+
+variables:
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+cache:
+  key:
+    files:
+      - gradle/wrapper/gradle-wrapper.properties
+      - build.gradle.kts
+      - settings.gradle.kts
+  paths:
+    - .gradle/caches/
+    - .gradle/wrapper/
+
+verify:
+  stage: verify
+  script:
+    - ./gradlew --no-daemon clean build
+  artifacts:
+    when: always
+    reports:
+      junit: build/test-results/test/TEST-*.xml
+    paths:
+      - build/reports/tests/test/
+    expire_in: 1 week
